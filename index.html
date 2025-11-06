@@ -18,6 +18,7 @@
                 <div class="input-group">
                     <label for="qr-type">QR Code Type:</label>
                     <select id="qr-type">
+                        <option value="text">Plain Text</option>
                         <option value="url">Website URL</option>
                         <option value="custom-url">Custom URL</option>
                         <option value="wifi">WiFi Credentials</option>
@@ -26,7 +27,6 @@
                         <option value="phone">Phone Number</option>
                         <option value="sms">SMS Message</option>
                         <option value="social">Social Media</option>
-                        <option value="text">Plain Text</option>
                     </select>
                 </div>
 
@@ -79,6 +79,7 @@
                 </div>
 
                 <button id="generate-btn" class="generate-btn">Generate QR Code</button>
+                <div id="library-status" class="library-status"></div>
             </div>
 
             <div class="result-section">
@@ -90,7 +91,21 @@
         </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <!-- Multiple CDN fallbacks for QR code library -->
+    <script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script>
+        // Fallback CDN if primary fails
+        if (typeof QRCode === 'undefined') {
+            document.write('<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"><\/script>');
+        }
+    </script>
+    <script>
+        // Second fallback
+        if (typeof QRCode === 'undefined') {
+            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"><\/script>');
+        }
+    </script>
+    
     <script src="script.js"></script>
 </body>
 </html>
