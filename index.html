@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,9 +19,9 @@
                 <div class="input-group">
                     <label for="qr-type">QR Code Type:</label>
                     <select id="qr-type">
-                        <option value="text">Plain Text</option>
                         <option value="url">Website URL</option>
                         <option value="custom-url">Custom URL</option>
+                        <option value="text">Plain Text</option>
                         <option value="wifi">WiFi Credentials</option>
                         <option value="contact">Contact Information</option>
                         <option value="email">Email</option>
@@ -91,21 +92,23 @@
         </main>
     </div>
 
-    <!-- Multiple CDN fallbacks for QR code library -->
+    <!-- Load QR Code library first -->
     <script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script>
-        // Fallback CDN if primary fails
-        if (typeof QRCode === 'undefined') {
-            document.write('<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"><\/script>');
+        // Wait for QRCode to be available and then load our script
+        function waitForQRCode() {
+            if (typeof QRCode !== 'undefined') {
+                console.log('QRCode library loaded successfully');
+                // Load our script after QRCode is available
+                const script = document.createElement('script');
+                script.src = 'script.js';
+                document.head.appendChild(script);
+            } else {
+                console.log('Waiting for QRCode library...');
+                setTimeout(waitForQRCode, 100);
+            }
         }
+        waitForQRCode();
     </script>
-    <script>
-        // Second fallback
-        if (typeof QRCode === 'undefined') {
-            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"><\/script>');
-        }
-    </script>
-    
-    <script src="script.js"></script>
 </body>
 </html>
