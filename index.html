@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QR Code Generator</h1>
+            <p>Generate QR codes for various types of content</p>
+        </header>
+
+        <main>
+            <div class="form-section">
+                <div class="input-group">
+                    <label for="qr-type">QR Code Type:</label>
+                    <select id="qr-type">
+                        <option value="text">Plain Text</option>
+                        <option value="url">Website URL</option>
+                        <option value="wifi">WiFi Credentials</option>
+                        <option value="contact">Contact Information</option>
+                        <option value="email">Email</option>
+                        <option value="phone">Phone Number</option>
+                        <option value="sms">SMS Message</option>
+                        <option value="social">Social Media</option>
+                    </select>
+                </div>
+
+                <div id="input-fields">
+                    <!-- Dynamic input fields will be inserted here -->
+                </div>
+
+                <div class="customization-section">
+                    <h3>Customization</h3>
+                    <div class="customization-grid">
+                        <div class="input-group">
+                            <label for="size">Size:</label>
+                            <select id="size">
+                                <option value="200">Small (200x200)</option>
+                                <option value="300" selected>Medium (300x300)</option>
+                                <option value="400">Large (400x400)</option>
+                                <option value="500">Extra Large (500x500)</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="foreground-color">Foreground Color:</label>
+                            <input type="color" id="foreground-color" value="#000000">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="background-color">Background Color:</label>
+                            <input type="color" id="background-color" value="#ffffff">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="logo">Logo:</label>
+                            <select id="logo">
+                                <option value="">No Logo</option>
+                                <option value="facebook">Facebook</option>
+                                <option value="instagram">Instagram</option>
+                                <option value="linkedin">LinkedIn</option>
+                                <option value="meetup">Meetup</option>
+                                <option value="website">Website</option>
+                                <option value="discord">Discord</option>
+                                <option value="email">Email</option>
+                                <option value="phone">Phone</option>
+                                <option value="wifi">WiFi</option>
+                                <option value="twitter">Twitter</option>
+                                <option value="youtube">YouTube</option>
+                                <option value="tiktok">TikTok</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="generate-btn" class="generate-btn">Generate QR Code</button>
+            </div>
+
+            <div class="result-section">
+                <div id="qr-container">
+                    <canvas id="qr-canvas"></canvas>
+                </div>
+                <button id="download-btn" class="download-btn" style="display: none;">Download QR Code</button>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
