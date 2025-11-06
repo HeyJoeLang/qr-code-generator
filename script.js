@@ -69,6 +69,16 @@ class QRCodeGenerator {
                 `;
                 break;
 
+            case 'custom-url':
+                html = `
+                    <div class="input-group">
+                        <label for="custom-url-input">Custom URL:</label>
+                        <input type="url" id="custom-url-input" placeholder="https://your-custom-link.com">
+                        <small class="input-help">This QR code will redirect to your custom URL when scanned</small>
+                    </div>
+                `;
+                break;
+
             case 'wifi':
                 html = `
                     <div class="input-group">
@@ -196,6 +206,11 @@ class QRCodeGenerator {
                 case 'url':
                     const url = document.getElementById('url-input').value;
                     data = url.startsWith('http') ? url : `https://${url}`;
+                    break;
+
+                case 'custom-url':
+                    const customUrl = document.getElementById('custom-url-input').value;
+                    data = customUrl.startsWith('http') ? customUrl : `https://${customUrl}`;
                     break;
 
                 case 'wifi':
