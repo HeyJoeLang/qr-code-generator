@@ -1,3 +1,12 @@
+
+// Ensure QRCode is available before defining the class
+if (typeof QRCode === 'undefined') {
+    console.error('QRCode library not loaded');
+    document.getElementById('library-status').innerHTML = '<div class="error">QRCode library failed to load. Please refresh the page.</div>';
+} else {
+    console.log('QRCode library confirmed available');
+}
+
 class QRCodeGenerator {
     constructor() {
         this.canvas = document.getElementById('qr-canvas');
@@ -7,9 +16,6 @@ class QRCodeGenerator {
         this.inputFields = document.getElementById('input-fields');
         this.qrContainer = document.getElementById('qr-container');
         this.libraryStatus = document.getElementById('library-status');
-        
-        // Check if QR library is loaded
-        this.isQRLibraryLoaded = false;
         
         // Updated to use image files instead of emojis
         this.logos = {
@@ -27,46 +33,24 @@ class QRCodeGenerator {
             tiktok: 'logos/tiktok.png'
         };
 
-        this.checkLibraryAndInit();
+        this.init();
     }
 
-    checkLibraryAndInit() {
-        // Check multiple times if library is loaded
-        let attempts = 0;
-        const maxAttempts = 50; // 5 seconds total
-        
-        const checkLibrary = () => {
-            attempts++;
-            
-            if (typeof QRCode !== 'undefined') {
-                this.isQRLibraryLoaded = true;
-                this.initEventListeners();
-                this.updateInputFields();
-                this.showPlaceholder();
-                this.updateLibraryStatus(true);
-                return;
-            }
-            
-            if (attempts < maxAttempts) {
-                setTimeout(checkLibrary, 100);
-            } else {
-                this.updateLibraryStatus(false);
-                this.showError('Failed to load QR code library. Please refresh the page and try again.');
-            }
-        };
-        
-        checkLibrary();
-    }
-
-    updateLibraryStatus(loaded) {
-        if (loaded) {
+    init() {
+        // Check library status
+        if (typeof QRCode === 'undefined') {
+            this.libraryStatus.innerHTML = '<div class="error">QRCode library is not loaded. Please refresh the page.</div>';
+            return;
+        } else {
             this.libraryStatus.innerHTML = '<div class="success">✓ QR Code library loaded successfully</div>';
             setTimeout(() => {
                 this.libraryStatus.innerHTML = '';
             }, 3000);
-        } else {
-            this.libraryStatus.innerHTML = '<div class="error">✗ Failed to load QR Code library. Please check your internet connection and refresh the page.</div>';
         }
+
+        this.initEventListeners();
+        this.updateInputFields();
+        this.showPlaceholder();
     }
 
     initEventListeners() {
@@ -318,9 +302,11 @@ class QRCodeGenerator {
     }
 
     async generateQRCode() {
-        // Check if library is loaded before generating
-        if (!this.isQRLibraryLoaded || typeof QRCode === 'undefined') {
-            this.showError('QR Code library is not loaded. Please refresh the page and try again.');
+        console.log('generateQRCode called, QRCode type:', typeof QRCode);
+        
+        // Double-check QRCode is available
+        if (typeof QRCode === 'undefined') {
+            this.showError('QR Code library is not available. Please refresh the page and try again.');
             return;
         }
 
@@ -341,12 +327,17 @@ class QRCodeGenerator {
                     dark: foregroundColor,
                     light: backgroundColor
                 },
-                errorCorrectionLevel: 'H' // Higher error correction for logos
+                errorCorrectionLevel: 'H'
             };
+
+            console.log('About to generate QR code with data:', data);
+            console.log('QRCode object:', QRCode);
 
             // Generate QR code
             await QRCode.toCanvas(this.canvas, data, options);
             
+            console.log('QR code generated successfully');
+
             // Add logo if selected
             if (selectedLogo && this.logos[selectedLogo]) {
                 await this.addLogoToCanvas(selectedLogo, size);
@@ -369,34 +360,31 @@ class QRCodeGenerator {
             
             logoImage.onload = () => {
                 try {
-                    const logoSize = Math.floor(canvasSize * 0.12); // Slightly smaller for better scanning
+                    const logoSize = Math.floor(canvasSize * 0.12);
                     const x = (canvasSize - logoSize) / 2;
                     const y = (canvasSize - logoSize) / 2;
 
-                    // Create a white background circle for the logo
                     const padding = 8;
                     ctx.fillStyle = '#ffffff';
                     ctx.beginPath();
                     ctx.arc(canvasSize / 2, canvasSize / 2, (logoSize + padding) / 2, 0, 2 * Math.PI);
                     ctx.fill();
 
-                    // Draw a subtle border
                     ctx.strokeStyle = '#e0e0e0';
                     ctx.lineWidth = 1;
                     ctx.stroke();
 
-                    // Draw the logo image
                     ctx.drawImage(logoImage, x, y, logoSize, logoSize);
                     resolve();
                 } catch (error) {
                     console.warn('Failed to add logo to canvas:', error);
-                    resolve(); // Continue without logo
+                    resolve();
                 }
             };
 
             logoImage.onerror = () => {
                 console.warn(`Failed to load logo: ${this.logos[logoType]}`);
-                resolve(); // Continue without logo
+                resolve();
             };
 
             logoImage.src = this.logos[logoType];
@@ -439,10 +427,8 @@ class QRCodeGenerator {
     }
 }
 
-// Initialize the QR Code Generator when the page loads
+// Initialize the app when DOM is ready (this only runs if QRCode is available)
 document.addEventListener('DOMContentLoaded', () => {
-    // Wait a bit more for libraries to load
-    setTimeout(() => {
-        new QRCodeGenerator();
-    }, 500);
+    console.log('DOM loaded, initializing QRCodeGenerator');
+    new QRCodeGenerator();
 });
