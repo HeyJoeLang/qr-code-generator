@@ -6,6 +6,10 @@ class QRCodeGenerator {
         this.qrTypeSelect = document.getElementById('qr-type');
         this.inputFields = document.getElementById('input-fields');
         this.qrContainer = document.getElementById('qr-container');
+        this.libraryStatus = document.getElementById('library-status');
+        
+        // Check if QR library is loaded
+        this.isQRLibraryLoaded = false;
         
         // Updated to use image files instead of emojis
         this.logos = {
@@ -23,9 +27,46 @@ class QRCodeGenerator {
             tiktok: 'logos/tiktok.png'
         };
 
-        this.initEventListeners();
-        this.updateInputFields();
-        this.showPlaceholder();
+        this.checkLibraryAndInit();
+    }
+
+    checkLibraryAndInit() {
+        // Check multiple times if library is loaded
+        let attempts = 0;
+        const maxAttempts = 50; // 5 seconds total
+        
+        const checkLibrary = () => {
+            attempts++;
+            
+            if (typeof QRCode !== 'undefined') {
+                this.isQRLibraryLoaded = true;
+                this.initEventListeners();
+                this.updateInputFields();
+                this.showPlaceholder();
+                this.updateLibraryStatus(true);
+                return;
+            }
+            
+            if (attempts < maxAttempts) {
+                setTimeout(checkLibrary, 100);
+            } else {
+                this.updateLibraryStatus(false);
+                this.showError('Failed to load QR code library. Please refresh the page and try again.');
+            }
+        };
+        
+        checkLibrary();
+    }
+
+    updateLibraryStatus(loaded) {
+        if (loaded) {
+            this.libraryStatus.innerHTML = '<div class="success">✓ QR Code library loaded successfully</div>';
+            setTimeout(() => {
+                this.libraryStatus.innerHTML = '';
+            }, 3000);
+        } else {
+            this.libraryStatus.innerHTML = '<div class="error">✗ Failed to load QR Code library. Please check your internet connection and refresh the page.</div>';
+        }
     }
 
     initEventListeners() {
@@ -277,6 +318,12 @@ class QRCodeGenerator {
     }
 
     async generateQRCode() {
+        // Check if library is loaded before generating
+        if (!this.isQRLibraryLoaded || typeof QRCode === 'undefined') {
+            this.showError('QR Code library is not loaded. Please refresh the page and try again.');
+            return;
+        }
+
         try {
             this.clearMessages();
             this.showLoading();
@@ -394,5 +441,8 @@ class QRCodeGenerator {
 
 // Initialize the QR Code Generator when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    new QRCodeGenerator();
+    // Wait a bit more for libraries to load
+    setTimeout(() => {
+        new QRCodeGenerator();
+    }, 500);
 });
