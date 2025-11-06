@@ -85,6 +85,14 @@ main {
     resize: vertical;
 }
 
+.input-help {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #7f8c8d;
+    font-style: italic;
+}
+
 .customization-section {
     margin-top: 30px;
     padding-top: 20px;
