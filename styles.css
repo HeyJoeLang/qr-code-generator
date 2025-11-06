@@ -133,6 +133,11 @@ main {
     transform: translateY(0);
 }
 
+.library-status {
+    margin-top: 10px;
+    font-size: 14px;
+}
+
 #qr-container {
     text-align: center;
     padding: 20px;
